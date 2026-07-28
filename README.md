@@ -8,7 +8,7 @@ deployment `QmX9fNJ4invFEVzJFyQUtaVrawWLBMLkST5QetqqfKc46q` /
 One binary, one command, live SQL — no Postgres, no Docker, no third-party data API.
 
 ```sh
-nuthatch dev --dir . --rpc https://petko-rpc.infradao.tech/arbitrum
+nuthatch dev --dir . --rpc https://your-arbitrum-endpoint.example
 nuthatch sql --url http://127.0.0.1:8288 "SELECT * FROM protocol"
 ```
 
