@@ -1,0 +1,48 @@
+# yatr - https://github.com/cargopete/yatr
+#
+# Task names are the same across every nightswatchhq repo, so `yatr ci` means
+# the same thing wherever you are. Note that `ci` is deliberately not called
+# `check`: `yatr check` is a builtin that validates this file, and it shadows
+# any task of that name without warning.
+
+# A nest is config, not code: nuthatch.toml plus derived artifacts. These tasks
+# need the `nuthatch` binary on PATH (cargo install nuthatch).
+
+[settings]
+cache = true
+
+[tasks.gen]
+desc = "Regenerate schema.json / llms.txt / semantic.toml from nuthatch.toml"
+run = ["nuthatch schema"]
+sources = ["nuthatch.toml", "abis/**/*.json"]
+no_cache = true
+
+[tasks.drift]
+desc = "Fail if the derived artifacts are stale against nuthatch.toml"
+run = [
+    "nuthatch schema",
+    "git diff --exit-code -- schema.json llms.txt semantic.toml",
+]
+sources = ["nuthatch.toml", "abis/**/*.json", "schema.json", "semantic.toml"]
+
+[tasks.doctor]
+desc = "Probe the configured RPC endpoints for getLogs width and archive depth"
+run = ["nuthatch doctor"]
+no_cache = true
+
+[tasks.dev]
+desc = "Index and serve this nest locally"
+run = ["nuthatch dev"]
+foreground = true
+no_cache = true
+
+[tasks.checks]
+desc = "Run the nest's invariant and parity checks against indexed data"
+run = ["nuthatch check"]
+sources = ["checks/**/*.sql"]
+no_cache = true
+
+[tasks.ci]
+desc = "What CI can run without RPC access or indexed data: drift only"
+depends = ["drift"]
+run = []
